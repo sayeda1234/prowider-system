@@ -1,0 +1,42 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background: #f4f4f4;
+}
+
+.dashboard-container {
+  padding: 30px;
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.provider-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.provider-card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow:
+    0px 4px 10px
+    rgba(0,0,0,0.1);
+}
+
+.provider-card h2 {
+  margin-bottom: 15px;
+}
+
+.lead-box {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 8px;
+  margin-top: 10px;
+}
