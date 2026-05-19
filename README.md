@@ -254,8 +254,3 @@ http://localhost:3000/test-tools
 
 ---
 
-# Live Demo
-
-Add your deployed Vercel URL here.
-
----
