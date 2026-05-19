@@ -1,36 +1,261 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Prowider Mini Lead Distribution System
 
-## Getting Started
+A full-stack lead distribution platform built using Next.js and MongoDB.
 
-First, run the development server:
+This project simulates a real-world lead allocation system where customer service enquiries are automatically distributed to providers based on business rules, fair allocation logic, quotas, and concurrency-safe backend processing.
+
+---
+
+# Features
+
+## Customer Service Request
+- Public customer form
+- Create service enquiries
+- Duplicate lead prevention
+
+## Lead Allocation Engine
+- Mandatory provider assignment
+- Fair round-robin distribution
+- Monthly quota enforcement
+- Exactly 3 providers per lead
+- Persistent allocation state
+
+## Provider Dashboard
+- View assigned leads
+- Remaining quota tracking
+- Real-time updates
+
+## Webhook Simulation
+- Reset provider quota
+- Idempotency protection
+- Simulated payment gateway webhook
+
+## Concurrency Testing
+- Generate multiple leads simultaneously
+- Transaction-safe allocation logic
+
+---
+
+# Tech Stack
+
+Frontend:
+- Next.js
+
+Backend:
+- Next.js API Routes
+
+Database:
+- MongoDB Atlas
+- Mongoose
+
+---
+
+# Project Structure
+
+```bash
+src/
+│
+├── app/
+│   ├── api/
+│   │   ├── dashboard/
+│   │   ├── leads/
+│   │   ├── seed/
+│   │   └── webhook/
+│   │
+│   ├── dashboard/
+│   ├── request-service/
+│   └── test-tools/
+│
+├── lib/
+│   ├── allocateLead.js
+│   └── mongodb.js
+│
+└── models/
+    ├── AllocationState.js
+    ├── Lead.js
+    ├── LeadAssignment.js
+    ├── Provider.js
+    └── WebhookEvent.js
+```
+
+---
+
+# Business Rules
+
+## Mandatory Providers
+
+- Service 1 → Provider 1
+- Service 2 → Provider 5
+- Service 3 → Provider 1 and Provider 4
+
+## Fair Allocation Pools
+
+### Service 1
+- Provider 2
+- Provider 3
+- Provider 4
+
+### Service 2
+- Provider 6
+- Provider 7
+- Provider 8
+
+### Service 3
+- Provider 2
+- Provider 3
+- Provider 5
+- Provider 6
+- Provider 7
+- Provider 8
+
+---
+
+# Allocation Algorithm
+
+1. Save lead in MongoDB
+2. Assign mandatory providers
+3. Select remaining providers using round-robin allocation
+4. Respect provider monthly quota
+5. Prevent duplicate provider assignment
+6. Store allocation state in database
+
+The allocation index is persisted in MongoDB to ensure fair distribution even after server restart.
+
+---
+
+# Concurrency Handling
+
+MongoDB transactions and Mongoose sessions are used to ensure:
+- atomic lead creation
+- atomic provider assignment
+- safe quota updates
+- rollback on failure
+
+This prevents inconsistent data during simultaneous lead creation requests.
+
+---
+
+# Webhook Idempotency
+
+Webhook events are stored in the `WebhookEvent` collection using unique event IDs.
+
+Before processing a webhook:
+- system checks whether event already exists
+- duplicate events are ignored
+
+This prevents duplicate quota reset execution.
+
+---
+
+# API Routes
+
+## Seed Providers
+GET
+
+```bash
+/api/seed
+```
+
+## Create Lead
+POST
+
+```bash
+/api/leads
+```
+
+## Dashboard Data
+GET
+
+```bash
+/api/dashboard
+```
+
+## Reset Quota Webhook
+POST
+
+```bash
+/api/webhook/reset-quota
+```
+
+---
+
+# Pages
+
+## Customer Form
+
+```bash
+/request-service
+```
+
+## Provider Dashboard
+
+```bash
+/dashboard
+```
+
+## Test Tools
+
+```bash
+/test-tools
+```
+
+---
+
+# Setup Instructions
+
+## 1. Clone Repository
+
+```bash
+git clone YOUR_REPOSITORY_URL
+```
+
+## 2. Install Dependencies
+
+```bash
+npm install
+```
+
+## 3. Create Environment File
+
+Create `.env.local`
+
+```env
+MONGODB_URI=YOUR_MONGODB_CONNECTION_STRING
+```
+
+## 4. Run Project
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+http://localhost:3000/request-service
+---
+http://localhost:3000/test-tools
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+# Testing Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Duplicate Prevention
+- Same phone + same service is blocked
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Fair Allocation
+- Providers rotate fairly over time
 
-## Learn More
+## Quota Enforcement
+- Providers stop receiving leads after quota reached
 
-To learn more about Next.js, take a look at the following resources:
+## Real-Time Dashboard
+- Dashboard updates automatically every few seconds
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Webhook Idempotency
+- Same webhook event cannot process twice
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Concurrency
+- Generate multiple leads simultaneously from test panel
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# Live Demo
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Add your deployed Vercel URL here.
+
+---
